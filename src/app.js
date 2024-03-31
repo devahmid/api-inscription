@@ -25,7 +25,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Connexion à MongoDB
-mongoose.connect('mongodb://45.93.139.215:27017/maBDD', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie.'))
   .catch((err) => console.error('Connexion à MongoDB échouée.', err));
 
@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
   res.status(500).send('Quelque chose s\'est mal passé !');
 });
 
-const PORT =  3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });
