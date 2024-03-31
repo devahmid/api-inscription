@@ -1,0 +1,43 @@
+monProjet/
+│
+├── node_modules/                   # Dossiers des modules Node générés automatiquement
+│
+├── src/                            # Source principale de votre application
+│   ├── config/                     # Configuration de l'application (db, middleware...)
+│   │   ├── db.js                   # Configuration de la connexion à MongoDB
+│   │   └── auth.js                 # Configurations liées à l'authentification (stratégies JWT...)
+│   │
+│   ├── models/                     # Modèles de données Mongoose
+│   │   ├── Tuteur.js               # Modèle pour le tuteur
+│   │   └── Enfant.js               # Modèle pour l'enfant
+│   │
+│   ├── routes/                     # Définition des routes Express
+│   │   ├── tuteurRoutes.js         # Routes pour la gestion des tuteurs
+│   │   └── enfantRoutes.js         # Routes pour la gestion des enfants
+│   │
+│   ├── controllers/                # Logique des contrôleurs pour séparer la logique de routage
+│   │   ├── tuteurController.js     # Contrôleurs pour les tuteurs
+│   │   └── enfantController.js     # Contrôleurs pour les enfants
+│   │
+│   ├── middleware/                 # Middlewares personnalisés (authentification, vérification...)
+│   │   └── authMiddleware.js       # Middleware d'authentification
+│   │
+│   └── app.js                      # Point d'entrée principal de l'application Express
+│
+├── .env                            # Fichier pour les variables d'environnement
+│
+├── package.json                    # Gestion des dépendances et scripts NPM
+│
+└── README.md                       # Documentation du projet
+Explications :
+node_modules/ : Contient tous les packages NPM installés pour votre projet. Ce dossier n'est pas inclus dans le système de contrôle de version (git).
+src/ : Contient tout le code source de votre application.
+config/ : Contient des fichiers de configuration, comme la connexion à MongoDB et la configuration des stratégies d'authentification.
+models/ : Définit les schémas Mongoose pour vos entités de données.
+routes/ : Contient les définitions des routes Express, séparées par entité ou fonctionnalité pour une meilleure organisation.
+controllers/ : Contient la logique métier de votre application, séparant ce qui est spécifique à la gestion des entités des routes elles-mêmes.
+middleware/ : Contient des fonctions middleware personnalisées pour l'authentification, la vérification des rôles, etc.
+app.js : Le point d'entrée de votre application Express. Il configure l'application et lie tout ensemble.
+.env : Stocke les variables d'environnement, comme les chaînes de connexion à la base de données, les clés secrètes, etc.
+package.json : Définit les dépendances du projet et les scripts NPM pour démarrer, tester, et déployer l'application.
+README.md : Documente le but du projet, l'architecture, et comment démarrer, utiliser et contribuer au projet.
