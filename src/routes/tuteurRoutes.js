@@ -17,5 +17,11 @@ router.get('/me', protect, tuteurController.getMe);
 // Route pour ajouter un enfant au tuteur connecté
 router.post('/enfants', protect, tuteurController.addEnfant);
 
+// Mise à jour des informations d'un enfant
+router.put('/enfants/:id', protect, tuteurController.updateEnfant);
+
+// Suppression d'un enfant
+router.delete('/enfants/:id', protect, tuteurController.deleteEnfant);
+
 
 module.exports = router;

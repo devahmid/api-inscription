@@ -84,3 +84,76 @@ exports.addEnfant = async (req, res) => {
       res.status(500).send({ message: 'Erreur lors de l\'ajout de l\'enfant.', error });
     }
   };
+// Mise à jour d'un enfant
+exports.updateEnfant2 = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { nom, prenom, dateNaissance } = req.body;
+      const enfant = await Enfant.findByIdAndUpdate(id, { nom, prenom, dateNaissance }, { new: true });
+      if (!enfant) {
+          return res.status(404).json({ message: "Enfant non trouvé." });
+      }
+      res.json({ message: "Enfant mis à jour avec succès.", enfant });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur lors de la mise à jour de l'enfant." });
+  }
+};
+// Mettre à jour les informations d'un enfant
+exports.updateEnfant = async (req, res) => {
+  const { id } = req.params; // L'ID de l'enfant
+  const { nom, prenom, dateNaissance } = req.body; // Les nouvelles informations de l'enfant
+  try {
+      // D'abord, mettre à jour l'enfant dans la collection d'enfants
+      const updatedEnfant = await Enfant.findByIdAndUpdate(id, { nom, prenom, dateNaissance }, { new: true });
+
+      if (!updatedEnfant) {
+          return res.status(404).json({ message: "Enfant non trouvé." });
+      }
+
+      // Ensuite, mettre à jour les informations de l'enfant dans le document du tuteur
+      // Remarque : Cela suppose que vous avez un tableau d'objets `enfants` dans votre document `Tuteur`
+      const tuteurId = req.user._id; // Assumant que vous avez l'ID du tuteur à partir de l'authentification
+      await Tuteur.updateOne(
+          { _id: tuteurId, "enfants._id": id },
+          { $set: { "enfants.$": updatedEnfant } } // Mise à jour de l'enfant spécifique dans le tableau
+      );
+
+      res.json({ message: "Enfant mis à jour avec succès", enfant: updatedEnfant });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur lors de la mise à jour de l'enfant." });
+  }
+};
+
+// Suppression d'un enfant
+exports.deleteEnfant = async (req, res) => {
+  try {
+      const { id } = req.params;
+      console.log(id)
+      // Supprimer l'enfant de la collection d'enfants
+      const result = await Enfant.findByIdAndDelete(id);
+      if (!result) {
+          return res.status(404).json({ message: "Enfant non trouvé." });
+      }
+
+      // Supprimer l'enfant du tableau des enfants dans le document du tuteur
+      // Assumant que vous avez l'ID du tuteur à partir de l'authentification
+      const tuteurId = req.user._id;
+      Tuteur.findByIdAndUpdate(
+        tuteurId,
+        { $pull: { enfants: { _id: id } } }, // Commande pour retirer l'enfant
+        { new: true } // Option pour retourner le document mis à jour
+      )
+      .then(result => console.log(result))
+      .catch(err => console.error(err));
+
+      res.json({ message: "Enfant supprimé avec succès." });
+  } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      res.status(500).json({ message: "Erreur serveur lors de la suppression de l'enfant." });
+  }
+};
+
+
+

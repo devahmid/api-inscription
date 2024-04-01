@@ -13,9 +13,14 @@ const enfantRoutes = require('./routes/enfantRoutes');
 const app = express();
 
 // Configuration des middlewares
-app.use(bodyParser.json());
+app.set('trust proxy', true);
+
+app.use(express.json());
+
 app.use(cors());
-app.use(helmet()); // Sécurise les headers HTTP
+
+app.use(helmet()); 
+app.use(bodyParser.json());
 
 // Configuration de la limitation de requête
 const limiter = rateLimit({
