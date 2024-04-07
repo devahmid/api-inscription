@@ -157,3 +157,35 @@ exports.deleteEnfant = async (req, res) => {
 
 
 
+const transporter = require('../config/email');
+
+// Fonction pour demander un renouvellement de mot de passe
+exports.requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const tuteur = await Tuteur.findOne({ email });
+    if (!tuteur) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+    
+    const token = generateToken(tuteur._id, false); // Générer un token temporaire
+    const resetLink = `http://votreapp.com/reset-password/${token}`; // Lien de réinitialisation
+    
+    // Envoyer l'email
+    await transporter.sendMail({
+      from: 'votre.email@gmail.com',
+      to: tuteur.email,
+      subject: 'Réinitialisation de votre mot de passe',
+      html: `<p>Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe: <a href="${resetLink}">${resetLink}</a></p>`
+    });
+    
+    res.json({ message: 'Email de réinitialisation envoyé.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+// Fonction pour réinitialiser le mot de passe
+// Vous devrez implémenter cette fonction pour gérer la réinitialisation du mot de passe
+// après que l'utilisateur a cliqué sur le lien envoyé par email.

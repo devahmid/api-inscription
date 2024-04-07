@@ -23,5 +23,5 @@ router.put('/enfants/:id', protect, tuteurController.updateEnfant);
 // Suppression d'un enfant
 router.delete('/enfants/:id', protect, tuteurController.deleteEnfant);
 
-
+router.post('/request-reset-password', tuteurController.requestPasswordReset);
 module.exports = router;
