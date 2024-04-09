@@ -169,17 +169,48 @@ exports.requestPasswordReset = async (req, res) => {
     }
     
     const token = generateToken(tuteur._id, false); // Générer un token temporaire
-    const resetLink = `http://votreapp.com/reset-password/${token}`; // Lien de réinitialisation
+    const resetLink = `http://localhost:4200/reset-password/${token}`; // Lien de réinitialisation
     
     // Envoyer l'email
     await transporter.sendMail({
-      from: 'votre.email@gmail.com',
+      from: 'contact@centre-culturel-olivier.fr',
       to: tuteur.email,
       subject: 'Réinitialisation de votre mot de passe',
       html: `<p>Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe: <a href="${resetLink}">${resetLink}</a></p>`
     });
     
     res.json({ message: 'Email de réinitialisation envoyé.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    // Vérifier le token (assurez-vous que votre fonction generateToken inclut une date d'expiration)
+    let decoded;
+    try {
+      decoded = jwt.verify(token, 'laCleSecrete');
+    } catch (error) {
+      return res.status(400).json({ message: 'Token invalide ou expiré.' });
+    }
+
+    const tuteur = await Tuteur.findById(decoded.id);
+    if (!tuteur) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Vérifiez ici si le token n'a pas déjà été utilisé ou est expiré (si vous stockez cette info)
+
+    // Mettre à jour le mot de passe
+    // Assurez-vous d'hasher le nouveau mot de passe avant de le stocker
+    tuteur.password = newPassword; // Assurez-vous d'utiliser une méthode de votre modèle Tuteur pour hasher le mot de passe
+    await tuteur.save();
+
+    res.json({ message: 'Mot de passe réinitialisé avec succès.' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur.' });

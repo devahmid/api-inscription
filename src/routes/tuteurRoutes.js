@@ -24,4 +24,7 @@ router.put('/enfants/:id', protect, tuteurController.updateEnfant);
 router.delete('/enfants/:id', protect, tuteurController.deleteEnfant);
 
 router.post('/request-reset-password', tuteurController.requestPasswordReset);
+// Route pour réinitialiser le mot de passe
+router.post('/reset-password/:token', tuteurController.resetPassword);
+
 module.exports = router;
