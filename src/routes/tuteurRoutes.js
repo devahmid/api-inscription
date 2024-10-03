@@ -27,4 +27,9 @@ router.post('/request-reset-password', tuteurController.requestPasswordReset);
 // Route pour réinitialiser le mot de passe
 router.post('/reset-password/:token', tuteurController.resetPassword);
 
+router.delete('/:id', protect, tuteurController.deleteTuteurAndEnfants);
+
+// Route pour mettre à jour le profil du tuteur connecté
+router.put('/update-profile', protect, tuteurController.updateProfile);
+
 module.exports = router;

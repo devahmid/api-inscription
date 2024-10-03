@@ -53,19 +53,22 @@ exports.getMe = async (req, res) => {
 
 // Ajout d'un enfant à un tuteur
 exports.addEnfant = async (req, res) => {
-    try {
-      const tuteurId = req.user._id;
-      const { nom, prenom, dateNaissance } = req.body;
-  
-      // Création de l'enfant en tant que document indépendant
-      const nouvelEnfant = new Enfant({
-        nom,
-        prenom,
-        dateNaissance,
-        tuteur: tuteurId
-      });
-  
-      const enfantSauvegarde = await nouvelEnfant.save();
+  try {
+    const tuteurId = req.user._id;
+    const { nom, prenom, dateNaissance, niveau, creneau, note } = req.body;
+
+    // Création de l'enfant en tant que document indépendant avec les nouvelles propriétés
+    const nouvelEnfant = new Enfant({
+      nom,
+      prenom,
+      dateNaissance,
+      tuteur: tuteurId,
+      niveau,
+      creneau,
+      note
+    });
+    console.log('******************** ', nouvelEnfant)
+    const enfantSauvegarde = await nouvelEnfant.save();
   
       // Ajout de l'enfant au tableau 'enfants' du tuteur (approche hybride)
       const updatedTuteur = await Tuteur.findByIdAndUpdate(
@@ -102,10 +105,10 @@ exports.updateEnfant2 = async (req, res) => {
 // Mettre à jour les informations d'un enfant
 exports.updateEnfant = async (req, res) => {
   const { id } = req.params; // L'ID de l'enfant
-  const { nom, prenom, dateNaissance } = req.body; // Les nouvelles informations de l'enfant
+  const { nom, prenom, dateNaissance, niveau, creneau, note } = req.body; // Les nouvelles informations de l'enfant
   try {
       // D'abord, mettre à jour l'enfant dans la collection d'enfants
-      const updatedEnfant = await Enfant.findByIdAndUpdate(id, { nom, prenom, dateNaissance }, { new: true });
+      const updatedEnfant = await Enfant.findByIdAndUpdate(id, { nom, prenom, dateNaissance, niveau, creneau, note}, { new: true });
 
       if (!updatedEnfant) {
           return res.status(404).json({ message: "Enfant non trouvé." });
@@ -164,6 +167,7 @@ exports.requestPasswordReset = async (req, res) => {
   const { email } = req.body;
   try {
     const tuteur = await Tuteur.findOne({ email });
+    console.log('**************** ', tuteur)
     if (!tuteur) {
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
@@ -214,6 +218,61 @@ exports.resetPassword = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+exports.deleteTuteurAndEnfants = async (req, res) => {
+  try {
+    const tuteurId = req.params.id;
+    const userId = req.user._id; // ID du tuteur connecté
+
+    // Vérifier si l'ID du tuteur correspond à celui du tuteur connecté
+    if (tuteurId !== userId.toString()) {
+      return res.status(403).json({ message: 'Action non autorisée.' });
+    }
+
+    // Supprimer tous les enfants associés au tuteur
+    await Enfant.deleteMany({ tuteur: tuteurId });
+
+    // Supprimer le tuteur lui-même
+    await Tuteur.findByIdAndDelete(tuteurId);
+
+    res.status(200).json({ message: 'Tuteur et tous les enfants associés supprimés avec succès.' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression du tuteur et des enfants :', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la suppression du tuteur et des enfants.' });
+  }
+};
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, prenom, email, password } = req.body;
+    const tuteurId = req.user._id; // ID du tuteur récupéré depuis le middleware d'authentification
+
+    // Trouver le tuteur par ID
+    let tuteur = await Tuteur.findById(tuteurId);
+    if (!tuteur) {
+      return res.status(404).json({ message: 'Tuteur non trouvé.' });
+    }
+
+    // Mettre à jour les informations
+    if (name) tuteur.name = name;
+    if (prenom) tuteur.prenom = prenom;
+    if (email) tuteur.email = email;
+    if (password) {
+      // Assurez-vous d'hasher le mot de passe avant de le stocker
+      tuteur.password = await bcrypt.hash(password, 8);
+    }
+
+    // Sauvegarder les modifications
+    await tuteur.save();
+
+    // Retourner le tuteur mis à jour (sans envoyer le mot de passe)
+    const updatedTuteur = await Tuteur.findById(tuteurId).select('-password');
+    res.status(200).json({ message: 'Profil mis à jour avec succès.', tuteur: updatedTuteur });
+
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du profil:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la mise à jour du profil.' });
   }
 };
 

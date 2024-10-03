@@ -1,10 +1,12 @@
 require('dotenv').config(); // Chargement des variables d'environnement
+const socketIo = require('socket.io');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const http = require('http')
 
 // Importation des routes
 const tuteurRoutes = require('./routes/tuteurRoutes');
@@ -42,6 +44,31 @@ app.use('/api/enfants', enfantRoutes);
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Quelque chose s\'est mal passé !');
+});
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Autoriser toutes les origines, à ajuster selon vos besoins
+    methods: ["GET", "POST"] // Méthodes autorisées
+  }
+});
+// Gestion des connexions WebSocket
+io.on('connection', (socket) => {
+  console.log('Un client est connecté');
+
+  socket.on('disconnect', () => {
+    console.log('Un client est déconnecté');
+  });
+
+  // Vous pouvez ajouter plus de gestionnaires d'événements ici
+  socket.on('requestData', async () => {
+    try {
+      const data = await fetchData(); // Assurez-vous de créer cette fonction
+      socket.emit('dataResponse', data);
+    } catch (error) {
+      socket.emit('error', 'Erreur lors de la récupération des données');
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3000;
