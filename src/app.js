@@ -30,7 +30,8 @@ const limiter = rateLimit({
   max: 100 // Limite chaque IP à 100 requêtes par windowMs
 });
 app.use(limiter);
-const mongoURI = 'mongodb://admin:Elodie1990%40@localhost:27017/mydatabase?authSource=admin';
+const mongoURI = 'mongodb://admin:Elodie1990%40@194.164.72.170:27017/mydatabase?authSource=admin';
+
 
 // Connexion à MongoDB
 mongoose.connect(mongoURI)
