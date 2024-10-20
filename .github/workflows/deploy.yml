@@ -109,10 +109,18 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
           docker stop express-app || true
           docker rm express-app || true
+          
+          # Créer un fichier .env temporaire avec les secrets
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
+         
+          
+          # Lancer le conteneur avec le fichier .env
           docker run -d \
+          --env-file .env \
           -p 3000:3000 \
           --name express-app \
-          -e MONGO_URI="${{ secrets.MONGO_URI }}" \
-          -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
           ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
-
+          
+          # Supprimer le fichier .env temporaire
+          rm .env
+    
