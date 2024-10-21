@@ -120,7 +120,7 @@ jobs:
            # Lancer le conteneur avec le fichier .env et le volume pour les fichiers dans le dossier assets
           docker run -d \
           --env-file .env \
-          -v /var/www/assets:/app/assets \  # Montage du dossier assets
+          -v /var/www/assets:/app/assets 
           -p 3000:3000 \
           --name express-app \
           ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
