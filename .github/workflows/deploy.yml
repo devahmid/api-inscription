@@ -115,7 +115,7 @@ jobs:
          
           
           # Créer un dossier pour persister les fichiers uploadés sur le VPS
-          mkdir -p /var/www/assets
+          # mkdir -p /var/www/assets
           
            # Lancer le conteneur avec le fichier .env et le volume pour les fichiers dans le dossier assets
           docker run -d \
