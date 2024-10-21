@@ -114,13 +114,16 @@ jobs:
           echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
          
           
-          # Lancer le conteneur avec le fichier .env
+          # Créer un dossier pour persister les fichiers uploadés sur le VPS
+          mkdir -p /var/www/assets
+          
+           # Lancer le conteneur avec le fichier .env et le volume pour les fichiers dans le dossier assets
           docker run -d \
           --env-file .env \
+          -v /var/www/assets:/app/assets \  # Montage du dossier assets
           -p 3000:3000 \
           --name express-app \
           ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
           
           # Supprimer le fichier .env temporaire
           rm .env
-    

@@ -11,6 +11,8 @@ const http = require('http')
 // Importation des routes
 const tuteurRoutes = require('./routes/tuteurRoutes');
 const enfantRoutes = require('./routes/enfantRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+
 
 const app = express();
 
@@ -41,6 +43,7 @@ mongoose.connect(mongoURI)
 // Utilisation des routes
 app.use('/api/tuteurs', tuteurRoutes);
 app.use('/api/enfants', enfantRoutes);
+app.use('/upload', uploadRoutes);
 
 // Middleware d'erreur global (pour les erreurs non gérées)
 app.use((err, req, res, next) => {
