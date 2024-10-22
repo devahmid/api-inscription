@@ -106,24 +106,18 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         port: 22
         script: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
-          docker stop express-app || true
-          docker rm express-app || true
-          
-          # Créer un fichier .env temporaire avec les secrets
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
-         
-          
-          # Créer un dossier pour persister les fichiers uploadés sur le VPS
-          # mkdir -p /var/www/assets
-          
-           # Lancer le conteneur avec le fichier .env et le volume pour les fichiers dans le dossier assets
-          docker run -d \
-          --env-file .env \
-          -v /var/www/assets:/app/assets 
-          -p 3000:3000 \
-          --name express-app \
-          ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
-          
-          # Supprimer le fichier .env temporaire
-          rm .env
+            docker pull ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
+            docker stop express-app || true
+            docker rm express-app || true
+            
+            # Créer un dossier pour persister les fichiers uploadés sur le VPS
+            mkdir -p /var/www/assets
+            
+            # Lancer le conteneur avec la variable d'environnement et le volume pour les fichiers dans le dossier assets
+            docker run -d \
+              --env MONGO_URI=${{ secrets.MONGO_URI }} \
+              -v /var/www/assets:/app/assets \
+              -p 3000:3000 \
+              --name express-app \
+              ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
+      
