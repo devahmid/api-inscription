@@ -43,7 +43,7 @@ mongoose.connect(mongoURI)
 // Utilisation des routes
 app.use('/api/tuteurs', tuteurRoutes);
 app.use('/api/enfants', enfantRoutes);
-app.use('/upload', uploadRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Middleware d'erreur global (pour les erreurs non gérées)
 app.use((err, req, res, next) => {
