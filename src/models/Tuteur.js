@@ -19,7 +19,7 @@ const tuteurSchema = new mongoose.Schema({
   telephone: String,
   password: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
-  enfants: [enfantSchema] // Embarquer directement les schémas des enfants
+  enfants: [enfantSchema] 
 });
 
 // Hook pour hasher le mot de passe avant de sauvegarder le tuteur

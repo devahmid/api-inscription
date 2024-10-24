@@ -12,6 +12,7 @@ const http = require('http')
 const tuteurRoutes = require('./routes/tuteurRoutes');
 const enfantRoutes = require('./routes/enfantRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const coursRoutes = require('./routes/courseRoutes');
 
 
 const app = express();
@@ -25,6 +26,8 @@ app.use(cors());
 
 app.use(helmet()); 
 app.use(bodyParser.json());
+app.use('/assets', express.static('assets'));
+
 
 // Configuration de la limitation de requête
 const limiter = rateLimit({
@@ -38,12 +41,14 @@ const mongoURI = process.env.MONGO_URI;
 // Connexion à MongoDB
 mongoose.connect(mongoURI)
   .then(() => console.log('Connexion à MongoDB réussie.'))
+  
   .catch((err) => console.error('Connexion à MongoDB échouée.', err));
 
 // Utilisation des routes
 app.use('/api/tuteurs', tuteurRoutes);
 app.use('/api/enfants', enfantRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/cours', coursRoutes);
 
 // Middleware d'erreur global (pour les erreurs non gérées)
 app.use((err, req, res, next) => {
