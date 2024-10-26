@@ -96,7 +96,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ahmid44/my-express-app:latest
+        tags: ahmid44/express-app:latest
     
     - name: Deploy to VPS via SSH
       uses: appleboy/ssh-action@v0.1.3
