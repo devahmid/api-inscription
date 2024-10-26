@@ -106,7 +106,7 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         port: 22
         script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/express-app:latest
             docker stop express-app || true
             docker rm express-app || true
             
@@ -119,5 +119,5 @@ jobs:
               -v /var/www/assets:/app/assets \
               -p 3000:3000 \
               --name express-app \
-              ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
+              ${{ secrets.DOCKER_USERNAME }}/xpress-app:latest
       
