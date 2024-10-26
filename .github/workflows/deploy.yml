@@ -119,5 +119,5 @@ jobs:
               -v /var/www/assets:/app/assets \
               -p 3000:3000 \
               --name express-app \
-              ${{ secrets.DOCKER_USERNAME }}/xpress-app:latest
+              ${{ secrets.DOCKER_USERNAME }}/express-app:latest
       
