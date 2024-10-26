@@ -115,7 +115,7 @@ jobs:
             
             # Lancer le conteneur avec la variable d'environnement et le volume pour les fichiers dans le dossier assets
             docker run -d \
-              --env MONGO_URI=${{ secrets.MONGO_URI }} \
+              --env MONGO_URI=${{ secrets.MONGO_URI2 }} \
               -v /var/www/assets:/app/assets \
               -p 3000:3000 \
               --name express-app \
